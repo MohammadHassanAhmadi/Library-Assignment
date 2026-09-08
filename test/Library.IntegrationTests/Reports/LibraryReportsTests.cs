@@ -142,4 +142,16 @@ public class LibraryReportsTests(LibraryDatabaseFixture fixture)
 
         Assert.Empty(books);
     }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    [InlineData(101)]
+    public async Task GetReadersAlsoBorrowedAsync_WhenLimitIsOutOfRange_ThrowsArgumentOutOfRangeException(int limit)
+    {
+        await using var dbContext = fixture.CreateDbContext();
+
+        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() =>
+            new LibraryReports(dbContext).GetReadersAlsoBorrowedAsync(1, limit));
+    }
 }

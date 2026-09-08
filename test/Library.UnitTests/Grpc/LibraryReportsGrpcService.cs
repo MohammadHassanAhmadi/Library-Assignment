@@ -169,7 +169,7 @@ public class LibraryReportsGrpcServiceTests
     public async Task GetMostBorrowedBooks_WhenLimitIsRejected_ThrowsInvalidArgument(int limit)
     {
         _reports
-            .Setup(r => r.GetMostBorrowedBooksAsync(0, It.IsAny<CancellationToken>()))
+            .Setup(r => r.GetMostBorrowedBooksAsync(limit, It.IsAny<CancellationToken>()))
             .ThrowsAsync(new ArgumentOutOfRangeException("limit", limit, "Limit must be between 1 and 100."));
 
         var exception = await Assert.ThrowsAsync<RpcException>(() => CreateGrpcService()
@@ -344,6 +344,23 @@ public class LibraryReportsGrpcServiceTests
         Assert.DoesNotContain("timed out", exception.Status.Detail);
     }
 
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    [InlineData(101)]
+    public async Task GetReadersAlsoBorrowed_WhenLimitIsRejected_ThrowTsInvalidArgument(int limit)
+    {
+        _reports
+            .Setup(r => r.GetReadersAlsoBorrowedAsync(1, limit, It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new ArgumentOutOfRangeException("limit", limit, "Limit must be between 1 and 100."));
+
+        var exception = await Assert.ThrowsAsync<RpcException>(() => CreateGrpcService()
+            .GetReadersAlsoBorrowed(new ReadersAlsoBorrowedRequest { BookId = 1, Limit = limit },
+                FakeServerCallContext.Create()));
+
+        Assert.Equal(StatusCode.InvalidArgument, exception.StatusCode);
+    }
+
     [Fact]
     public async Task GetMostActiveBorrowers_WhenTimestampIsOutOfRange_ThrowsInvalidArgument()
     {
@@ -359,4 +376,6 @@ public class LibraryReportsGrpcServiceTests
 
         Assert.Equal(StatusCode.InvalidArgument, exception.StatusCode);
     }
+
+
 }

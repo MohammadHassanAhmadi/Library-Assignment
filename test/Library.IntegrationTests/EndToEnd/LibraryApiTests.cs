@@ -2,7 +2,6 @@
 using System.Net.Http.Json;
 using Library.Api.Contract;
 using Library.Contracts.Reports;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
@@ -151,6 +150,14 @@ public sealed class LibraryApiTests(LibraryDatabaseFixture fixture) : IAsyncLife
     {
         var response = await _httpClient.GetAsync(
             "/api/reports/most-active-borrowers?from=2026-02-01T00:00:00Z&to=2026-03-01T00:00:00Z&limit=0");
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task GetReadersAlsoBorrowed_WhenLimitIsInvalid_ReturnsBadRequest()
+    {
+        var response = await _httpClient.GetAsync("/api/reports/books/1/readers-also-borrowed?limit=0");
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
