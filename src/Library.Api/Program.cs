@@ -1,4 +1,4 @@
-using Library.Api;
+using Library.Api.Endpoints;
 using Library.Api.Infrastructure;
 using Library.Contracts.Reports;
 
@@ -11,15 +11,19 @@ builder.Services.AddGrpcClient<LibraryReportsRpc.LibraryReportsRpcClient>(option
     option.Address = new Uri(serviceAddress));
 
 builder.Services.AddExceptionHandler<RpcExceptionHandler>();
+builder.Services.AddProblemDetails();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
 app.UseExceptionHandler();
+app.UseStatusCodePages();
 app.UseSwagger();
 app.UseSwaggerUI();
 
 app.MapReportEndpoints();
 
 app.Run();
+
+public partial class Program;

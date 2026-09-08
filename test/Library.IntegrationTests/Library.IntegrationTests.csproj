@@ -29,12 +29,9 @@
 		<Using Include="Xunit" />
 	</ItemGroup>
 
-	
-
 	<ItemGroup>
-	  <None Update="appsettings.json">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
+		<Content Include="appsettings.json" CopyToOutputDirectory="PreserveNewest" />
 	</ItemGroup>
+
 
 </Project>

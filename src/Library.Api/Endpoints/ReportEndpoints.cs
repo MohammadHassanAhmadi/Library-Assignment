@@ -1,24 +1,26 @@
 ﻿using Google.Protobuf.WellKnownTypes;
+
 using Library.Api.Contract;
 using Library.Contracts.Reports;
 
-namespace Library.Api
+namespace Library.Api.Endpoints
 {
     public static class ReportEndpoints
     {
+
         public static IEndpointRouteBuilder MapReportEndpoints(this IEndpointRouteBuilder app)
         {
-            app.MapGroup("/api/reports").WithTags("Reports");
+            var reports = app.MapGroup("/api/reports").WithTags("Reports");
 
-            app.MapGet("/most-borrowed-books", GetMostBorrowedBooks);
-            app.MapGet("/most-active-borrowers", GetMostActiveBorrowers);
-            app.MapGet("/loans/{loanId:int}/reading-pace", GetReadingPace);
-            app.MapGet("/books/{bookId:int}/readers-also-borrowed", GetReadersAlsoBorrowed);
+            reports.MapGet("/most-borrowed-books", GetMostBorrowedBooks);
+            reports.MapGet("/most-active-borrowers", GetMostActiveBorrowers);
+            reports.MapGet("/loans/{loanId:int}/reading-pace", GetReadingPace);
+            reports.MapGet("/books/{bookId:int}/readers-also-borrowed", GetReadersAlsoBorrowed);
 
             return app;
         }
 
-        private static async Task<IResult> GetReadersAlsoBorrowed(LibraryReportsRpc.LibraryReportsRpcClient rpcClient, int bookId, int limit, CancellationToken cancellationToken)
+        private static async Task<IResult> GetReadersAlsoBorrowed(LibraryReportsRpc.LibraryReportsRpcClient rpcClient, int bookId, CancellationToken cancellationToken, int limit = 10)
         {
             var response = await rpcClient.GetReadersAlsoBorrowedAsync(new ReadersAlsoBorrowedRequest
             {
@@ -32,7 +34,7 @@ namespace Library.Api
         }
 
         private static async Task<IResult> GetReadingPace(LibraryReportsRpc.LibraryReportsRpcClient rpcClient,
-            int loanId, CancellationToken cancellationToken)
+            int loanId, CancellationToken cancellationToken, int limit = 10)
         {
             var response = await rpcClient.GetReadingPaceAsync(new ReadingPaceRequest {LoanId = loanId},
                 cancellationToken: cancellationToken);
@@ -50,8 +52,8 @@ namespace Library.Api
         private static async Task<IResult> GetMostActiveBorrowers(LibraryReportsRpc.LibraryReportsRpcClient rpcClient,
             DateTimeOffset from,
             DateTimeOffset to,
-            int limit,
-            CancellationToken cancellationToken)
+            CancellationToken cancellationToken,
+            int limit = 10)
         {
             var response = await rpcClient.GetMostActiveBorrowersAsync(new MostActiveBorrowersRequest
                 {
@@ -66,7 +68,7 @@ namespace Library.Api
         private static async Task<IResult> GetMostBorrowedBooks(
             LibraryReportsRpc.LibraryReportsRpcClient rpcClient,
             CancellationToken cancellationToken,
-            int limit)
+            int limit = 10)
         {
             var response = await rpcClient.GetMostBorrowedBooksAsync(new MostBorrowedBooksRequest {Limit = limit},
                 cancellationToken: cancellationToken);
