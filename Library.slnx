@@ -1,0 +1,15 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".gitignore" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/Library.Api/Library.Api.csproj" />
+    <Project Path="src/Library.Contracts/Library.Contracts.csproj" Id="a967f392-244c-4fb8-b884-6373a84427c9" />
+    <Project Path="src/Library.Service/Library.Service.csproj" Id="34d38573-b58f-47bd-9a47-2b0f4b069765" />
+    <Project Path="src/Library.Warmups/Library.Warmups.csproj" />
+  </Folder>
+  <Folder Name="/test/">
+    <Project Path="test/Library.IntegrationTests/Library.IntegrationTests.csproj" Id="45d0888b-9c00-4a2f-b9e8-82473cf0c37f" />
+    <Project Path="test/Library.UnitTests/Library.UnitTests.csproj" Id="d4e95ed3-5d27-4a82-b9d1-86a0c50ed261" />
+  </Folder>
+</Solution>

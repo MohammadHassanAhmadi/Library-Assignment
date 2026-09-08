@@ -1,0 +1,87 @@
+syntax = "proto3";
+
+package library.reports.v1;
+
+option csharp_namespace = "Library.Contracts.Reports";
+
+import "google/protobuf/timestamp.proto";
+
+service LibraryReportsRpc{
+	rpc GetMostBorrowedBooks(MostBorrowedBooksRequest)
+		returns (MostBorrowedBooksResponse);
+
+	rpc GetMostActiveBorrowers(MostActiveBorrowersRequest) 
+		returns (MostActiveBorrowersResponse);
+
+	rpc GetReadingPace(ReadingPaceRequest) 
+		returns (ReadingPaceResponse);
+
+
+	rpc GetReadersAlsoBorrowed(ReadersAlsoBorrowedRequest) 
+		returns (ReadersAlsoBorrowedResponse);
+
+}
+
+
+message MostBorrowedBooksRequest{
+	int32 limit =1;
+}
+
+message MostBorrowedBooksResponse{
+	repeated BorrowedBook books = 1;
+}
+
+message BorrowedBook{
+	int32 book_id =1;
+	string title =2;
+	int32 borrow_count = 3;
+}
+
+
+
+message MostActiveBorrowersRequest{
+	google.protobuf.Timestamp from = 1;
+	google.protobuf.Timestamp to = 2;
+	int32 limit = 3;
+}
+
+message MostActiveBorrowersResponse{
+	repeated ActiveBorrower borrowers =1;
+}
+
+message ActiveBorrower {
+	int32 borrower_id =1;
+	string name = 2;
+	int32 borrow_count = 3;
+}
+
+
+message ReadingPaceRequest{
+	int32 loan_id = 1;
+}
+
+message ReadingPaceResponse {
+	int32 loan_id = 1;
+	int32 borrower_id = 2;
+	int32 book_id = 3;
+	string book_title = 4;
+	string borrower_name = 5;
+	int32 page_count = 6;
+	double elapsed_days = 7;
+	double pages_per_day = 8;
+}
+
+message ReadersAlsoBorrowedRequest {
+	int32 book_id = 1;
+	int32 limit = 2;
+}
+
+message ReadersAlsoBorrowedResponse {
+	repeated ReadersAlsoBorrowedBook  books = 1;
+}
+
+message ReadersAlsoBorrowedBook  {
+	int32 book_id = 1;
+	string title = 2;
+	int32 reader_count  = 3;
+}
