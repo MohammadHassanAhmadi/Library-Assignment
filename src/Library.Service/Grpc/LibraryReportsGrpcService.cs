@@ -1,9 +1,9 @@
-﻿using Grpc.Core;
+﻿using Google.Protobuf.WellKnownTypes;
+using Grpc.Core;
 using Library.Contracts.Reports;
-using Google.Protobuf.WellKnownTypes;
 using Library.Service.Reports;
-namespace Library.Service.Grpc;
 
+namespace Library.Service.Grpc;
 
 public sealed class LibraryReportsGrpcService(ILibraryReport reports, ILogger<LibraryReportsGrpcService> logger)
     : LibraryReportsRpc.LibraryReportsRpcBase
@@ -47,7 +47,8 @@ public sealed class LibraryReportsGrpcService(ILibraryReport reports, ILogger<Li
             var from = ParseTimestamp(request.From, nameof(request.From));
             var to = ParseTimestamp(request.To, nameof(request.To));
 
-            var reportResults = await reports.GetMostActiveBorrowerAsync(from, to, request.Limit, context.CancellationToken);
+            var reportResults =
+                await reports.GetMostActiveBorrowerAsync(from, to, request.Limit, context.CancellationToken);
             var response = new MostActiveBorrowersResponse();
 
             response.Borrowers.AddRange(reportResults.Select(x => new ActiveBorrower
@@ -71,7 +72,8 @@ public sealed class LibraryReportsGrpcService(ILibraryReport reports, ILogger<Li
     }
 
 
-    public override async Task<ReadingPaceResponse> GetReadingPace(ReadingPaceRequest request, ServerCallContext context)
+    public override async Task<ReadingPaceResponse> GetReadingPace(ReadingPaceRequest request,
+        ServerCallContext context)
     {
         try
         {
@@ -102,7 +104,7 @@ public sealed class LibraryReportsGrpcService(ILibraryReport reports, ILogger<Li
             throw CreateRpcException(exception);
         }
     }
-    
+
     public override async Task<ReadersAlsoBorrowedResponse> GetReadersAlsoBorrowed(
         ReadersAlsoBorrowedRequest request,
         ServerCallContext context)
@@ -141,9 +143,15 @@ public sealed class LibraryReportsGrpcService(ILibraryReport reports, ILogger<Li
         return exception switch
         {
             ArgumentException e => new RpcException(new Status(StatusCode.InvalidArgument, e.Message)),
+
             KeyNotFoundException e => new RpcException(new Status(StatusCode.NotFound, e.Message)),
+
             LoanNotReturnedException e => new RpcException(new Status(StatusCode.FailedPrecondition, e.Message)),
+
+            LoanInvalidDurationException e => new RpcException(new Status(StatusCode.FailedPrecondition, e.Message)),
+
             LoanNotFoundException e => new RpcException(new Status(StatusCode.NotFound, e.Message)),
+
             _ => LogAndWrapUnexpected(exception)
         };
     }

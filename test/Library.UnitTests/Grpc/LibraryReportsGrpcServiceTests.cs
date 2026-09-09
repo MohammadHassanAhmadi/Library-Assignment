@@ -380,5 +380,21 @@ public class LibraryReportsGrpcServiceTests
         Assert.Equal(StatusCode.InvalidArgument, exception.StatusCode);
     }
 
+    [Fact]
+    public async Task GetReadingPace_WhenDurationIsInvalid_ThrowsFailedPrecondition()
+    {
+        var reportException = new LoanInvalidDurationException(3);
 
+        _reports
+            .Setup(r => r.GetReadingPaceAsync(3, It.IsAny<CancellationToken>()))
+            .ThrowsAsync(reportException);
+
+        var exception = await Assert.ThrowsAsync<RpcException>(() =>
+            CreateGrpcService().GetReadingPace(
+                new ReadingPaceRequest { LoanId = 3 },
+                FakeServerCallContext.Create()));
+
+        Assert.Equal(StatusCode.FailedPrecondition, exception.StatusCode);
+        Assert.Equal(reportException.Message, exception.Status.Detail);
+    }
 }

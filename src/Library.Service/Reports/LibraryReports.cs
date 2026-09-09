@@ -65,7 +65,11 @@ public sealed class LibraryReports(LibraryDbContext dbContext) : ILibraryReport
 
 
         var elapsedDays = (loan.ReturnedAt.Value - loan.BorrowedAt).TotalDays;
-        var pagePerDay = (float) loan.PageCount / Math.Max(elapsedDays, 1d);
+        if (elapsedDays <= 0)
+            throw new LoanInvalidDurationException(loanId);
+
+
+        var pagePerDay = loan.PageCount / elapsedDays;
 
         return new ReadingPaceResult(loanId, loan.BorrowerId,
             loan.BookId,

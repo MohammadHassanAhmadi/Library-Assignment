@@ -11,3 +11,9 @@ public sealed class LoanNotReturnedException(int loanId)
 {
     public int LoanId { get; } = loanId;
 }
+
+public sealed class LoanInvalidDurationException(int loanId)
+    : Exception($"Loan {loanId} must have a positive borrowing duration.")
+{
+    public int LoanId { get; } = loanId;
+}

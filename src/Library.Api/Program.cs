@@ -20,7 +20,7 @@ builder.Services.AddExceptionHandler<RpcExceptionHandler>();
 builder.Services.AddProblemDetails(options =>
     options.CustomizeProblemDetails = context =>
         context.ProblemDetails.Extensions["traceId"] =
-            Activity.Current?.Id ?? context.HttpContext.TraceIdentifier);
+            Activity.Current?.TraceId.ToString() ?? context.HttpContext.TraceIdentifier);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
