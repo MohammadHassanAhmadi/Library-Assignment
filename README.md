@@ -1,4 +1,4 @@
-# Library API System
+# Library API Assignment 
 
 An HTTP API over a gRPC service. It answers four reporting questions for a public library:
 which books get borrowed most, who borrows most in a period, how fast a borrower reads,
