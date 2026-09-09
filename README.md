@@ -9,6 +9,8 @@ and what else the readers of a book borrowed.
 - .NET 8 SDK
 - SQL Server
 
+All commands below are run from the repository root — the folder containing `Library.sln`.
+
 ## 1. Database
 
 **If you already have SQL Server**, point these two connection strings at it:
@@ -55,7 +57,11 @@ dotnet test
 ```
 
 59 unit tests and 33 integration tests. The integration tests create and drop their own
-database (`LibraryDb_Tests`), so the connection string above is all they need.
+database (`LibraryDb_Tests`), so the connection string above is all they need. The
+application does not have to be running.
+
+Line coverage is **97%**, excluding generated protobuf and EF migrations. The Coverage was measured with ReSharper (dotCover).
+
 
 ## Endpoints
 
@@ -78,7 +84,7 @@ Dates are ISO-8601, for example `2026-02-01T00:00:00Z`.
 | `Library.Warmups` | the four warm-up exercises |
 
 The API has no database access. Every report is answered by the service over gRPC.
-
+They run as two processes: the API talks to the service over gRPC.
 ## Notes
 
 - Errors are returned as ProblemDetails with a `traceId`. The same id appears in the log
