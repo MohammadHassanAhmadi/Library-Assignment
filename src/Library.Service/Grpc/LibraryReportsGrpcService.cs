@@ -1,6 +1,5 @@
 ﻿using Grpc.Core;
 using Library.Contracts.Reports;
-using Library.Service.Data;
 using Google.Protobuf.WellKnownTypes;
 using Library.Service.Reports;
 namespace Library.Service.Grpc;
@@ -55,7 +54,7 @@ public sealed class LibraryReportsGrpcService(ILibraryReport reports, ILogger<Li
             {
                 Name = x.Name,
                 BorrowerId = x.BorrowerId,
-                BorrowCount = x.BorrowerCount
+                BorrowCount = x.BorrowCount
             }));
 
             return response;

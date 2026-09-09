@@ -1,6 +1,6 @@
-﻿namespace Library.Api.Contract;
+﻿namespace Library.Api.Contracts;
 
-public sealed record ReadersAlsoBorrowedDto(int BookId, string Title, int BorrowerCount);
+public sealed record ReadersAlsoBorrowedDto(int BookId, string Title, int ReaderCount);
 
 public sealed record ReadingPaceDto(
     int LoanId,

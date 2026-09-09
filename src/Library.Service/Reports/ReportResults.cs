@@ -8,7 +8,7 @@ public sealed record BorrowedBookResults(
 public sealed record ActiveBorrowerResults(
     int BorrowerId,
     string Name,
-    int BorrowerCount);
+    int BorrowCount);
 
 public sealed record ReadingPaceResult(
     int LoanId,
@@ -23,4 +23,4 @@ public sealed record ReadingPaceResult(
 public sealed record ReadersAlsoBorrowedResult(
     int BookId,
     string Title,
-    int BorrowedCount);
+    int ReaderCount);

@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
-using Library.Api.Contract;
+using Library.Api;
+using Library.Api.Contracts;
 using Library.Contracts.Reports;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -108,7 +109,7 @@ public sealed class LibraryApiTests(LibraryDatabaseFixture fixture) : IAsyncLife
 
         Assert.NotNull(books);
         Assert.Equal("SQL Basics", books[0].Title);
-        Assert.Equal(2, books[0].BorrowerCount);
+        Assert.Equal(2, books[0].ReaderCount);
     }
 
     // Invalid requests

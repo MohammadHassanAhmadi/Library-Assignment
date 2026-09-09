@@ -1,6 +1,4 @@
-﻿using Library.Service.Reports;
-
-namespace Library.Service.Data;
+﻿namespace Library.Service.Reports;
 
 public interface ILibraryReport
 {

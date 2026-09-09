@@ -1,5 +1,7 @@
 using Library.Service.Data;
 using Library.Service.Grpc;
+using Library.Service.Reports;
+
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 

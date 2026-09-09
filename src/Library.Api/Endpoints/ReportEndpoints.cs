@@ -1,6 +1,5 @@
 ﻿using Google.Protobuf.WellKnownTypes;
-
-using Library.Api.Contract;
+using Library.Api.Contracts;
 using Library.Contracts.Reports;
 
 namespace Library.Api.Endpoints

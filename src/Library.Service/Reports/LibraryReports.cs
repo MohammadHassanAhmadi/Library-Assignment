@@ -1,7 +1,8 @@
-﻿using Library.Service.Reports;
+﻿using Library.Service.Data;
+
 using Microsoft.EntityFrameworkCore;
 
-namespace Library.Service.Data;
+namespace Library.Service.Reports;
 
 public sealed class LibraryReports(LibraryDbContext dbContext) : ILibraryReport
 {

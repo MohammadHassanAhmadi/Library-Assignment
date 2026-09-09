@@ -1,12 +1,15 @@
 ﻿using Google.Protobuf.WellKnownTypes;
+
 using Grpc.Core;
+
 using Library.Contracts.Reports;
-using Library.Service.Data;
 using Library.Service.Grpc;
 using Library.Service.Reports;
+
 using Microsoft.Extensions.Logging.Abstractions;
+
 using Moq;
-using ReadersAlsoBorrowedResult = Library.Service.Data.ReadersAlsoBorrowedResult;
+
 
 namespace Library.UnitTests.Grpc;
 

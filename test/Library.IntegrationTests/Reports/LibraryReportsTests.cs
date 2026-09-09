@@ -53,7 +53,7 @@ public class LibraryReportsTests(LibraryDatabaseFixture fixture)
         var borrowers = await new LibraryReports(dbContext).GetMostActiveBorrowerAsync(January, March, 10);
 
         Assert.Equal(4, borrowers.Count);
-        Assert.All(borrowers, borrower => Assert.Equal(2, borrower.BorrowerCount));
+        Assert.All(borrowers, borrower => Assert.Equal(2, borrower.BorrowCount));
     }
 
     [Fact]
@@ -64,7 +64,7 @@ public class LibraryReportsTests(LibraryDatabaseFixture fixture)
         var borrowers = await new LibraryReports(dbContext).GetMostActiveBorrowerAsync(February, March, 10);
 
         var carol = Assert.Single(borrowers, borrower => borrower.Name == "Carol");
-        Assert.Equal(2, carol.BorrowerCount);
+        Assert.Equal(2, carol.BorrowCount);
 
     }
 
@@ -85,7 +85,7 @@ public class LibraryReportsTests(LibraryDatabaseFixture fixture)
         var borrowers = await new LibraryReports(dbContext).GetMostActiveBorrowerAsync(February, March, 10);
 
         var dave = Assert.Single(borrowers, borrower => borrower.Name == "Dave");
-        Assert.Equal(2, dave.BorrowerCount);
+        Assert.Equal(2, dave.BorrowCount);
     }
 
     [Fact]
