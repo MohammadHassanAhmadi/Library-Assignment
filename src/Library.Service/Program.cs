@@ -1,6 +1,7 @@
 using Library.Service.Data;
 using Library.Service.Grpc;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace Library.Service;
 
@@ -9,15 +10,19 @@ public class Program
     public static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+        builder.Host.UseSerilog((context, configuration) =>
+            configuration.ReadFrom.Configuration(context.Configuration));
         builder.Services.AddScoped<ILibraryReport, LibraryReports>();
        
         builder.Services.AddGrpc();
         var connectionString = builder.Configuration.GetConnectionString("LibraryDb") ??
                                throw new InvalidOperationException("Connection string 'LibraryDb' is missing.");
         builder.Services.AddDbContext<LibraryDbContext>(option => option.UseSqlServer(connectionString));
-        builder.Services.AddScoped<LibraryReports>();
+        
+       
         var app = builder.Build();
-
+        
+        app.UseSerilogRequestLogging();
         await InitializeDatabase(app);
         app.MapGrpcService<LibraryReportsGrpcService>();
        
@@ -26,7 +31,15 @@ public class Program
             () =>
                 "Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
 
-        await app.RunAsync();
+        try
+        {
+            await app.RunAsync();
+        }
+        finally
+        {
+            await Log.CloseAndFlushAsync();
+        }
+
     }
 
     private static async Task InitializeDatabase(WebApplication app)

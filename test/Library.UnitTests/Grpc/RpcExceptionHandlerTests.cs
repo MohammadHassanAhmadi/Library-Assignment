@@ -2,6 +2,7 @@
 using Library.Api.Infrastructure;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Library.UnitTests.Grpc;
 
@@ -12,8 +13,9 @@ public class RpcExceptionHandlerTests
         var services = new ServiceCollection();
         services.AddLogging();
         services.AddProblemDetails();
+        var problemDetailsService = services.BuildServiceProvider().GetRequiredService<IProblemDetailsService>();
 
-        return new RpcExceptionHandler(services.BuildServiceProvider().GetRequiredService<IProblemDetailsService>());
+        return new RpcExceptionHandler(problemDetailsService, NullLogger<RpcExceptionHandler>.Instance);
     }
 
     [Theory]

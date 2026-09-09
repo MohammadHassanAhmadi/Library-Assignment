@@ -13,14 +13,15 @@ public class LibraryReportsTests(LibraryDatabaseFixture fixture)
     [Fact]
     public async Task GetMostBorrowedBooksAsync_RanksBooksByBorrowCount()
     {
-        await using var dbcontext = fixture.CreateDbContext();
+        await using var dbContext = fixture.CreateDbContext();
 
-        var books = await new LibraryReports(dbcontext).GetMostBorrowedBooksAsync(10);
+        var books = await new LibraryReports(dbContext).GetMostBorrowedBooksAsync(10);
 
         Assert.Collection(books,
             book => Assert.Equal(("Lord of the Rings - Fellowship of the Rings", 3), (book.Title, book.BorrowCount)),
-            book => Assert.Equal(("SQL Basics", 2), (book.Title, book.BorrowCount)),
-            book => Assert.Equal(("API Design", 1), (book.Title, book.BorrowCount)));
+            book => Assert.Equal(("API Design", 3), (book.Title, book.BorrowCount)),
+            book => Assert.Equal(("SQL Basics", 2), (book.Title, book.BorrowCount)));
+
     }
 
     [Fact]
@@ -51,7 +52,7 @@ public class LibraryReportsTests(LibraryDatabaseFixture fixture)
 
         var borrowers = await new LibraryReports(dbContext).GetMostActiveBorrowerAsync(January, March, 10);
 
-        Assert.Equal(3, borrowers.Count);
+        Assert.Equal(4, borrowers.Count);
         Assert.All(borrowers, borrower => Assert.Equal(2, borrower.BorrowerCount));
     }
 
@@ -62,8 +63,7 @@ public class LibraryReportsTests(LibraryDatabaseFixture fixture)
 
         var borrowers = await new LibraryReports(dbContext).GetMostActiveBorrowerAsync(February, March, 10);
 
-        var carol = Assert.Single(borrowers);
-        Assert.Equal("Carol", carol.Name);
+        var carol = Assert.Single(borrowers, borrower => borrower.Name == "Carol");
         Assert.Equal(2, carol.BorrowerCount);
 
     }
@@ -75,6 +75,17 @@ public class LibraryReportsTests(LibraryDatabaseFixture fixture)
 
         await Assert.ThrowsAsync<ArgumentException>(() =>
             new LibraryReports(dbContext).GetMostActiveBorrowerAsync(March, January, 10));
+    }
+
+    [Fact]
+    public async Task GetMostActiveBorrowerAsync_CountsRepeatLoansOfTheSameBookAsSeparateTransactions()
+    {
+        await using var dbContext = fixture.CreateDbContext();
+
+        var borrowers = await new LibraryReports(dbContext).GetMostActiveBorrowerAsync(February, March, 10);
+
+        var dave = Assert.Single(borrowers, borrower => borrower.Name == "Dave");
+        Assert.Equal(2, dave.BorrowerCount);
     }
 
     [Fact]

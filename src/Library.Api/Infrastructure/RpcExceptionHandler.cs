@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Library.Api.Infrastructure;
 
-public sealed class RpcExceptionHandler(IProblemDetailsService problemDetailsService) : IExceptionHandler
+public sealed class RpcExceptionHandler(IProblemDetailsService problemDetailsService, ILogger<RpcExceptionHandler> logger) : IExceptionHandler
 {
     public async ValueTask<bool> TryHandleAsync(HttpContext httpContext,
         Exception exception,
@@ -13,18 +13,24 @@ public sealed class RpcExceptionHandler(IProblemDetailsService problemDetailsSer
         if (exception is not RpcException rpcException)
             return false;
 
-        httpContext.Response.StatusCode = ToHttpStatusCode(rpcException.StatusCode);
+        var statusCode = ToHttpStatusCode(rpcException.StatusCode);
+        if (statusCode >= StatusCodes.Status500InternalServerError)
+            logger.LogError(exception, "{Method} {Path} failed with {StatusCode} ({GrpcStatus}).",
+                httpContext.Request.Method, httpContext.Request.Path, statusCode, rpcException.StatusCode);
 
-        return await problemDetailsService.TryWriteAsync(new ProblemDetailsContext
+        httpContext.Response.StatusCode = statusCode;
+        
+        await problemDetailsService.TryWriteAsync(new ProblemDetailsContext
         {
             HttpContext = httpContext,
             ProblemDetails = new ProblemDetails
             {
-                Status = httpContext.Response.StatusCode,
+                Status = statusCode,
                 Title = "The library service rejected the request",
                 Detail = rpcException.Status.Detail
             }
         });
+        return true;
     }
 
     private static int ToHttpStatusCode(StatusCode rpcStatusCode)

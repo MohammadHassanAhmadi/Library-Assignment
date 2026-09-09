@@ -9,16 +9,16 @@ public static class SampleDataSeeder
     {
         var hasExistingData = await dbContext.Books.AnyAsync(cancellationToken) ||
                               await dbContext.Borrowers.AnyAsync(cancellationToken);
-        
+
         if (hasExistingData)
             return;
 
         await using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
 
-        var lotrBook = new Book { Title = "Lord of the Rings - Fellowship of the Rings", PageCount = 500 };
-        var hpBook = new Book { Title = "Harry Potter and the Chamber of Secrets", PageCount = 352 };
-        var sqlBook = new Book { Title = "SQL Basics", PageCount = 464 };
-        var apiBook = new Book { Title = "API Design", PageCount = 352 };
+        var lotrBook = new Book {Title = "Lord of the Rings - Fellowship of the Rings", PageCount = 500};
+        var hpBook = new Book {Title = "Harry Potter and the Chamber of Secrets", PageCount = 352};
+        var sqlBook = new Book {Title = "SQL Basics", PageCount = 464};
+        var apiBook = new Book {Title = "API Design", PageCount = 352};
 
         dbContext.Books.AddRange(
             lotrBook,
@@ -27,11 +27,12 @@ public static class SampleDataSeeder
             apiBook
         );
 
-        var alice = new Borrower { Name = "Alice" };
-        var bob = new Borrower { Name = "Bob" };
-        var carol = new Borrower { Name = "Carol" };
+        var alice = new Borrower {Name = "Alice"};
+        var bob = new Borrower {Name = "Bob"};
+        var carol = new Borrower {Name = "Carol"};
+        var dave = new Borrower {Name = "Dave"};
 
-        dbContext.Borrowers.AddRange(alice, bob, carol);
+        dbContext.Borrowers.AddRange(alice, bob, carol, dave);
         await dbContext.SaveChangesAsync(cancellationToken);
 
         dbContext.Loans.AddRange(
@@ -40,7 +41,11 @@ public static class SampleDataSeeder
             CreateLoan(bob, lotrBook, UtcDate(1, 12), UtcDate(1, 22)),
             CreateLoan(bob, apiBook, UtcDate(1, 23), UtcDate(2, 2)),
             CreateLoan(carol, lotrBook, UtcDate(2, 1), UtcDate(2, 11)),
-            CreateLoan(carol, sqlBook, UtcDate(2, 12), null)
+            CreateLoan(carol, sqlBook, UtcDate(2, 12), null),
+
+            // Dave borrows the same book twice: two transactions, one borrower.
+            CreateLoan(dave, apiBook, UtcDate(2, 3), UtcDate(2, 10)),
+            CreateLoan(dave, apiBook, UtcDate(2, 11), UtcDate(2, 16))
         );
 
         await dbContext.SaveChangesAsync(cancellationToken);
@@ -62,7 +67,8 @@ public static class SampleDataSeeder
         };
     }
 
-    private static DateTimeOffset UtcDate(int month, int day) =>
-        new(2026, month, day, 0, 0, 0, TimeSpan.Zero);
-
+    private static DateTimeOffset UtcDate(int month, int day)
+    {
+        return new DateTimeOffset(2026, month, day, 0, 0, 0, TimeSpan.Zero);
+    }
 }

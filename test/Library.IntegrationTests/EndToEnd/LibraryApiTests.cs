@@ -60,11 +60,11 @@ public sealed class LibraryApiTests(LibraryDatabaseFixture fixture) : IAsyncLife
     {
         var borrowers = await _httpClient.GetFromJsonAsync<ActiveBorrowerDto[]>(
             "/api/reports/most-active-borrowers?from=2026-02-01T00:00:00Z&to=2026-03-01T00:00:00Z");
- 
+        
         Assert.NotNull(borrowers);
-        var carol = Assert.Single(borrowers);
-        Assert.Equal("Carol", carol.Name);
-        Assert.Equal(2, carol.BorrowCount);
+        Assert.Collection(borrowers,
+            borrower => Assert.Equal(("Carol", 2), (borrower.Name, borrower.BorrowCount)),
+            borrower => Assert.Equal(("Dave", 2), (borrower.Name, borrower.BorrowCount)));
     }
 
     [Fact]

@@ -34,7 +34,7 @@ namespace Library.Api.Endpoints
         }
 
         private static async Task<IResult> GetReadingPace(LibraryReportsRpc.LibraryReportsRpcClient rpcClient,
-            int loanId, CancellationToken cancellationToken, int limit = 10)
+            int loanId, CancellationToken cancellationToken)
         {
             var response = await rpcClient.GetReadingPaceAsync(new ReadingPaceRequest {LoanId = loanId},
                 cancellationToken: cancellationToken);
