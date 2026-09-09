@@ -1,0 +1,12 @@
+# Local SQL Server for development and tests.
+# The app itself runs with `run.bat`, not from here
+
+services:
+  library-sql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: library-sql
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "LibraryDev_2026!"
+    ports:
+      - "127.0.0.1:14333:1433"

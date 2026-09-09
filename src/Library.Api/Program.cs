@@ -45,7 +45,4 @@ finally
     await Log.CloseAndFlushAsync();
 }
 
-namespace Library.Api
-{
-    public partial class Program;
-}
+public partial class Program;
